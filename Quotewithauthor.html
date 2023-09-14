@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Random Quote</title>
+</head>
+
+<style>
+    /*CSS styles*/
+    #quote {
+        font-size: 36px; 
+        color: #336699; 
+        font-family: "Garamond", sans-serif; 
+    }
+</style>
+
+<body>
+    <h1>Random Quote of the day</h1>
+    <p id="quote">Loading...</p>
+    <p id="author"></p>
+    <!-- <p id="url"></p> -->
+   
+    <script>
+        // Request API and update the HTML
+        function fetchRandomQuote() 
+        {
+            fetch('https://quotes15.p.rapidapi.com/quotes/random/', 
+            {
+                method: 'GET',
+                headers: 
+                {
+                    'X-Rapidapi-Key': 'c41dc436e5mshc14e284bc39d592p17964ejsn7a51ef2d5963',
+                    'X-Rapidapi-Host': 'quotes15.p.rapidapi.com',
+                    'Host': 'quotes15.p.rapidapi.com'
+                }
+            })
+            // Resonse
+            .then(response => response.json())
+            .then(data => 
+            {
+                document.getElementById('quote').innerText = data.content;
+             // document.getElementById('url').innerText = data.url;
+                document.getElementById('author').innerText = `- ${data.originator.name}`;
+            })
+            // Error
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                document.getElementById('quote').innerText = 'Error fetching data.';
+            });
+        }
+
+        // Call the function to fetch the initial quote
+        fetchRandomQuote();
+    </script>
+</body>
+</html>
