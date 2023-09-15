@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Real-Time Weather Report</title>
+
+    <style>
+        body 
+        {
+            font-family: Arial, sans-serif;
+            background-color: #84b1e3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Real-Time Weather Report</h1>
+    
+    <label for="locationInput">Enter Location :</label>
+    <input type="text" id="locationInput" placeholder="53.1,-0.13">
+    <button onclick="getWeather()">Get Weather</button>
+    
+    <div id="weatherReport">
+        <!-- Weather data will be displayed here -->
+    </div>
+
+    <script>
+        function getWeather() {
+            const locationInput = document.getElementById('locationInput');
+            const weatherReport = document.getElementById('weatherReport');
+
+            // Replace with your RapidAPI key
+            const apiKey = 'c41dc436e5mshc14e284bc39d592p17964ejsn7a51ef2d5963';
+
+            // Construct the API URL
+            const apiUrl = `https://weatherapi-com.p.rapidapi.com/current.json?q=${locationInput.value}`;
+
+            fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'X-Rapidapi-Key': apiKey,
+                    'X-Rapidapi-Host': 'weatherapi-com.p.rapidapi.com'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Display the weather data
+                const weatherDescription = data.current.condition.text;
+                const temperature = data.current.temp_c;
+                const humidity = data.current.humidity;
+
+                weatherReport.innerHTML = `
+                    <h2>Weather Report</h2>
+                    <p>Location: ${locationInput.value}</p>
+                    <p>Condition: ${weatherDescription}</p>
+                    <p>Temperature: ${temperature}°C</p>
+                    <p>Humidity: ${humidity}%</p>
+                `;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                weatherReport.innerHTML = '<p>An error occurred while fetching weather data.</p>';
+            });
+        }
+    </script>
+</body>
+</html>
