@@ -23,11 +23,12 @@
     </div>
 
     <script>
-        function getWeather() {
+        function getWeather() 
+        {
             const locationInput = document.getElementById('locationInput');
             const weatherReport = document.getElementById('weatherReport');
 
-            // Replace with your RapidAPI key
+            // API key here
             const apiKey = 'c41dc436e5mshc14e284bc39d592p17964ejsn7a51ef2d5963';
 
             // Construct the API URL
@@ -35,14 +36,15 @@
 
             fetch(apiUrl, {
                 method: 'GET',
-                headers: {
+                headers: 
+                {
                     'X-Rapidapi-Key': apiKey,
                     'X-Rapidapi-Host': 'weatherapi-com.p.rapidapi.com'
                 }
             })
             .then(response => response.json())
             .then(data => {
-                // Display the weather data
+                // Display data 
                 const weatherDescription = data.current.condition.text;
                 const temperature = data.current.temp_c;
                 const humidity = data.current.humidity;
