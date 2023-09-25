@@ -38,6 +38,26 @@ resource "azurerm_app_service" "md_web_app" {
   }
 }
 
+resource "azurerm_public_ip" "md_public_ip" {
+  name                = "MD-PublicIP"
+  location            = azurerm_resource_group.md_rg.location
+  resource_group_name = azurerm_resource_group.md_rg.name
+  allocation_method   = "Dynamic"
+}
+
+resource "azurerm_network_interface" "md_network_interface" {
+  name                = "MD-NetworkInterface"
+  location            = azurerm_resource_group.md_rg.location
+  resource_group_name = azurerm_resource_group.md_rg.name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_virtual_network.md_vnet.subnets[0].id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id           = azurerm_public_ip.md_public_ip.id
+  }
+}
+
 resource "azurerm_application_gateway" "md_app_gateway" {
   name                = "MD-AppGateway"
   location            = azurerm_resource_group.md_rg.location
@@ -65,7 +85,12 @@ resource "azurerm_application_gateway" "md_app_gateway" {
 
   backend_address_pool {
     name = "backendAddressPool"
-    ip_addresses = [azurerm_app_service.md_web_app.default_site_hostname]
+    backend_addresses = [azurerm_app_service.md_web_app.default_site_hostname]
+  }
+
+  frontend_port {
+    name = "frontendPort"
+    port = 80
   }
 
   http_listener {
@@ -77,24 +102,17 @@ resource "azurerm_application_gateway" "md_app_gateway" {
   request_routing_rule {
     name                       = "rule1"
     rule_type                  = "Basic"
-    http_listener_name         = azurerm_application_gateway.md_app_gateway.http_listeners[0].name
-    backend_address_pool_name  = azurerm_application_gateway.md_app_gateway.backend_address_pools[0].name
-    backend_http_settings_name = azurerm_application_gateway_backend_http_settings.md_app_gateway_backend_http_settings.name
-  }
-
-  backend_http_settings {
-    name                  = "appGatewayBackendHttpSettings"
-    cookie_based_affinity = "Disabled"
-    path                  = "/"
-    port                  = 80
-    protocol              = "Http"
-    request_timeout       = 30
+    http_listener_name         = azurerm_application_gateway.md_app_gateway.http_listener[0].name
+    backend_address_pool_name  = azurerm_application_gateway.md_app_gateway.backend_address_pool[0].name
+    backend_http_settings_name = azurerm_application_gateway.md_app_gateway.backend_http_settings[0].name
   }
 }
 
-resource "azurerm_public_ip" "md_public_ip" {
-  name                = "MD-PublicIP"
-  location            = azurerm_resource_group.md_rg.location
-  resource_group_name = azurerm_resource_group.md_rg.name
-  allocation_method   = "Dynamic"
+resource "azurerm_application_gateway_backend_http_settings" "md_app_gateway_backend_http_settings" {
+  name                  = "appGatewayBackendHttpSettings"
+  cookie_based_affinity = "Disabled"
+  path                  = "/"
+  port                  = 80
+  protocol              = "Http"
+  request_timeout       = 30
 }
