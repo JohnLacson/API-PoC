@@ -11,7 +11,7 @@ COPY Quote.html /app/Quote.html
 EXPOSE 80
 
 # Install a simple Python web server
-RUN pip install http.server
+RUN pip install httpserver
 
 # Command to start the web server and serve the HTML file
 CMD ["python", "-m", "http.server", "80"]
