@@ -14,7 +14,7 @@ resource "azurerm_virtual_network" "md_vnet" {
   address_space       = ["10.0.0.0/16"]
 }
 
-resource "azurerm_app_service_plan" "md_app_service_plan" {
+resource "azurerm_service_plan" "md_app_service_plan" {
   name                = "MD-AppServicePlan"
   location            = azurerm_resource_group.md_rg.location
   resource_group_name = azurerm_resource_group.md_rg.name
